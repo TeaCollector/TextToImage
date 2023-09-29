@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 
@@ -26,14 +28,25 @@ public class AddTheText implements ImageTransformer {
 
     @Override
     public void transformImage(String[] args) throws IOException {
+
+        List<String> parsedList = parsedList(args);
+        System.out.println("Parsed List: " + parsedList);
         image = ImageIO.read(new File(args[1]));
         Graphics graphics = image.getGraphics();
         String text = args[args.length - 1];
 
-        Font font = Font.getFont("Arial", new Font("MyFont", Font.BOLD, 100));
-        graphics.setFont(font);
-        defineColor(args, graphics);
-        definePositionAndDrawText(args, graphics, text);
+        try {
+            Files.createDirectory(Path.of("./mems"));
+        } catch (IOException e) {
+            e.getCause();
+
+        }
+
+        setFont(parsedList, graphics);
+
+        defineColor(parsedList, graphics);
+        definePositionAndDrawText(parsedList, graphics, text);
+
         graphics.dispose();
 
         if (args[args.length - 2].equals("-s")) {
@@ -42,33 +55,46 @@ public class AddTheText implements ImageTransformer {
 
     }
 
-    private void definePositionAndDrawText(String[] args, Graphics graphics, String text) {
-        if (positionList.contains(args[2])) {
-            System.out.println("Position: " + args[2]);
-            int[] coordinates = setPosition(args[2]);
-            graphics.drawString(text, coordinates[0], coordinates[1]);
-        } else if (positionList.contains(args[3])) {
-            System.out.println("Position: " + args[3]);
-            int[] coordinates = setPosition(args[3]);
-            graphics.drawString(text, coordinates[0], coordinates[1]);
-        } else {
+    private void setFont(List<String> args, Graphics graphics) {
+        int fontSize = 100;
+        try {
+            fontSize = Integer.parseInt(args.get(args.size() - 1));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            e.getCause();
+        }
+        System.out.println("Font size: " + fontSize);
+        Font font = Font.getFont("Arial", new Font("MyFont", Font.BOLD, fontSize));
+        graphics.setFont(font);
+    }
+
+    private void definePositionAndDrawText(List<String> args, Graphics graphics, String text) {
+        if (!positionList.contains(args.get(0))) {
             System.out.println("Can't find position use default.");
             graphics.drawString(text, 200, 200);
+
+        } else {
+            System.out.println("Position: " + args.get(0));
+            int[] coordinates = setPosition(args.get(0));
+            graphics.drawString(text, coordinates[0], coordinates[1]);
         }
     }
 
-    private void defineColor(String[] args, Graphics graphics) {
-        if (colorList.contains(args[3])) {
-            System.out.println("Color: " + args[3]);
-            Color color = setColor(args[3]);
-            graphics.setColor(color);
-        } else if (colorList.contains(args[2])) {
-            System.out.println("Color: " + args[2]);
-            Color color = setColor(args[2]);
-            graphics.setColor(color);
+    private void defineColor(List<String> args, Graphics graphics) {
+        if (!colorList.contains(args.get(1))) {
+            if (!colorList.contains(args.get(0))) {
+                System.out.println("Can't find color use default.");
+                graphics.setColor(BLACK);
+
+            } else {
+                System.out.println("Color: " + args.get(0));
+                Color color = setColor(args.get(0));
+                graphics.setColor(color);
+
+            }
         } else {
-            System.out.println("Can't find color use default.");
-            graphics.setColor(BLACK);
+            System.out.println("Color: " + args.get(1));
+            Color color = setColor(args.get(1));
+            graphics.setColor(color);
         }
     }
 
@@ -125,5 +151,29 @@ public class AddTheText implements ImageTransformer {
             }
         }
         return positionXY;
+    }
+
+    private List<String> parsedList(String[] args) {
+        List<String> parsedList = new ArrayList<>();
+        for (String position : args) {
+            if (positionList.contains(position)) {
+                parsedList.add(position);
+                break;
+            }
+        }
+        for (String color : args) {
+            if (colorList.contains(color)) {
+                parsedList.add(color);
+            }
+        }
+        for (String arg : args) {
+            char digit = arg.charAt(0);
+            if (Character.isDigit(digit)) {
+                parsedList.add(arg);
+                break;
+            }
+        }
+
+        return parsedList;
     }
 }

@@ -22,7 +22,7 @@ public class Main {
                     "a) 'center', 'top', 'bottom', 'lefttop', 'righttop', 'leftbottom' or 'rightbottom' - Adding text to specified position.\n" +
                     "b) 'red', 'green', 'black', 'blue'  - Change the text's color.\n" +
                     "c) '-s' - save the image in folder named 'mems'.\n\n" +
-                    "For example if you input: java -jar *.jar mem ./picture.jpg righttop red -s 'Nice kitty!' \n\n" +
+                    "For example if you input: java -jar build/libs/TextToImage-1.0-SNAPSHOT.jar mem ./picture.jpg righttop red -s 'Nice kitty!' \n\n" +
                     "You add red text: 'Nice kitty!' to the right top of the ./picture.jpg and save it at the /mems/\n" +
                     "You can switch the order of position and color, but another arguments NOT!\n" +
                     "By default settings: color = black, position = left top, not save.\n" +
