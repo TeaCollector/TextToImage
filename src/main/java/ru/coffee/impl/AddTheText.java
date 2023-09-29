@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+import static java.awt.Color.*;
+
 public class AddTheText implements ImageTransformer {
 
 
@@ -24,46 +26,38 @@ public class AddTheText implements ImageTransformer {
 
     @Override
     public void transformImage(String[] args) throws IOException {
-
-        System.out.println("Array with args: " + Arrays.toString(args));
-//        List<String> parseString = Arrays.asList(args);
         image = ImageIO.read(new File(args[1]));
         Graphics graphics = image.getGraphics();
         String text = args[args.length - 1];
 
-//                String positionInput = parseString.get(0);
-//        String colorInput = parseString.get(1);
-
-//        System.out.println(parseString);
-        int fontSize = 200;
-        Font font = Font.getFont("Arial", new Font("MyFont", Font.BOLD, fontSize));
+        Font font = Font.getFont("Arial", new Font("MyFont", Font.BOLD, 100));
         graphics.setFont(font);
+        defineColor(args, graphics);
+        definePositionAndDrawText(args, graphics, text);
+        graphics.dispose();
 
-
-//        try {
-//            fontSize = Integer.parseInt(args[4]);
-//        } catch (Exception e) {
-//            e.getMessage();
-//        }
-
-
-//        boolean position = positionList.contains(positionInput);
-//        System.out.println("Position: " + position);
-//        System.out.println("Has a position:" + positionInput);
-
-
-//        boolean color = colorList.contains(colorInput);
-//        System.out.println("Has a color:" + color);
-
-        if (positionList.contains(args[2])) {
-            System.out.println("position: " + args[2]);
-            int[] coordinates = setPosition(args[2]);
-            graphics.drawString(text, coordinates[0], coordinates[1]);
-        } else {
-            System.out.println("Cin't find position");
-            graphics.drawString(text, 400, 400);
+        if (args[args.length - 2].equals("-s")) {
+            ImageIO.write(image, "jpg", new File("mems" + args[1].substring(1)));
         }
 
+    }
+
+    private void definePositionAndDrawText(String[] args, Graphics graphics, String text) {
+        if (positionList.contains(args[2])) {
+            System.out.println("Position: " + args[2]);
+            int[] coordinates = setPosition(args[2]);
+            graphics.drawString(text, coordinates[0], coordinates[1]);
+        } else if (positionList.contains(args[3])) {
+            System.out.println("Position: " + args[3]);
+            int[] coordinates = setPosition(args[3]);
+            graphics.drawString(text, coordinates[0], coordinates[1]);
+        } else {
+            System.out.println("Can't find position use default.");
+            graphics.drawString(text, 200, 200);
+        }
+    }
+
+    private void defineColor(String[] args, Graphics graphics) {
         if (colorList.contains(args[3])) {
             System.out.println("Color: " + args[3]);
             Color color = setColor(args[3]);
@@ -73,22 +67,26 @@ public class AddTheText implements ImageTransformer {
             Color color = setColor(args[2]);
             graphics.setColor(color);
         } else {
-            System.out.println("Can't find color");
-            graphics.setColor(Color.BLACK);
+            System.out.println("Can't find color use default.");
+            graphics.setColor(BLACK);
         }
-        graphics.dispose();
-
-        if (args[args.length - 2].equals("-s")) {
-            ImageIO.write(image, "jpg", new File("mems/picture.jpg"));
-        }
-
     }
 
     private Color setColor(String color) {
-        if (color.equals("red")) return Color.RED;
-        else if (color.equals("black")) return Color.BLACK;
-        else if (color.equals("blue")) return Color.BLUE;
-        return Color.GREEN;
+        switch (color) {
+            case "red" -> {
+                return RED;
+            }
+            case "black" -> {
+                return BLACK;
+            }
+            case "blue" -> {
+                return BLUE;
+            }
+            default -> {
+                return GREEN;
+            }
+        }
     }
 
     private int[] setPosition(String position) {
@@ -96,7 +94,7 @@ public class AddTheText implements ImageTransformer {
         positionXY[0] = image.getWidth() / 3;
         positionXY[1] = image.getHeight() / 2;
         switch (position) {
-            case "center" -> {   // "center", "top", "bottom", "lefttop", "righttop", "leftbottom", "rightbottom"
+            case "center" -> {
                 positionXY[0] = image.getWidth() / 3;
                 positionXY[1] = image.getHeight() / 2;
             }
@@ -127,16 +125,5 @@ public class AddTheText implements ImageTransformer {
             }
         }
         return positionXY;
-    }
-
-    private List<String> parseArgsStringToList(String[] args) {
-        List<String> parseList = Arrays.asList(args);
-        for (int i = 0; i < parseList.size(); i++) {
-            String colorOrPosition = parseList.get(i);
-            if (colorList.contains(colorOrPosition) || positionList.contains(colorOrPosition)) {
-                parseList.set(i, colorOrPosition);
-            }
-        }
-        return parseList;
     }
 }
