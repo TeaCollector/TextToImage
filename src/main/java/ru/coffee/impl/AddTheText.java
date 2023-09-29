@@ -30,29 +30,27 @@ public class AddTheText implements ImageTransformer {
     public void transformImage(String[] args) throws IOException {
 
         List<String> parsedList = parsedList(args);
-        System.out.println("Parsed List: " + parsedList);
         image = ImageIO.read(new File(args[1]));
         Graphics graphics = image.getGraphics();
         String text = args[args.length - 1];
+        createDirectory();
+        setFont(parsedList, graphics);
+        defineColor(parsedList, graphics);
+        definePositionAndDrawText(parsedList, graphics, text);
+        graphics.dispose();
+        if (args[args.length - 2].equals("-s")) {
+            ImageIO.write(image, "jpg", new File("mems" + args[1].substring(1)));
+        }
 
+    }
+
+    private void createDirectory() {
         try {
             Files.createDirectory(Path.of("./mems"));
         } catch (IOException e) {
             e.getCause();
 
         }
-
-        setFont(parsedList, graphics);
-
-        defineColor(parsedList, graphics);
-        definePositionAndDrawText(parsedList, graphics, text);
-
-        graphics.dispose();
-
-        if (args[args.length - 2].equals("-s")) {
-            ImageIO.write(image, "jpg", new File("mems" + args[1].substring(1)));
-        }
-
     }
 
     private void setFont(List<String> args, Graphics graphics) {
@@ -116,41 +114,41 @@ public class AddTheText implements ImageTransformer {
     }
 
     private int[] setPosition(String position) {
-        int[] positionXY = new int[2];
-        positionXY[0] = image.getWidth() / 3;
-        positionXY[1] = image.getHeight() / 2;
+        int[] textPosition = new int[2];
+        textPosition[0] = image.getWidth() / 3;
+        textPosition[1] = image.getHeight() / 2;
         switch (position) {
             case "center" -> {
-                positionXY[0] = image.getWidth() / 3;
-                positionXY[1] = image.getHeight() / 2;
+                textPosition[0] = image.getWidth() / 3;
+                textPosition[1] = image.getHeight() / 2;
             }
             case "top" -> {
-                positionXY[0] = image.getWidth() / 3;
-                positionXY[1] = image.getHeight() / 7;
+                textPosition[0] = image.getWidth() / 3;
+                textPosition[1] = image.getHeight() / 7;
             }
             case "bottom" -> {
-                positionXY[0] = image.getWidth() / 3;
-                positionXY[1] = image.getHeight() * 7 / 8;
+                textPosition[0] = image.getWidth() / 3;
+                textPosition[1] = image.getHeight() * 7 / 8;
             }
             case "lefttop" -> {
-                positionXY[0] = image.getWidth() / 9;
-                positionXY[1] = image.getHeight() / 7;
+                textPosition[0] = image.getWidth() / 9;
+                textPosition[1] = image.getHeight() / 7;
             }
             case "righttop" -> {
-                positionXY[0] = image.getWidth() * 5 / 9;
-                positionXY[1] = image.getHeight() / 7;
+                textPosition[0] = image.getWidth() * 5 / 9;
+                textPosition[1] = image.getHeight() / 7;
             }
             case "leftbottom" -> {
-                positionXY[0] = image.getWidth() / 9;
-                positionXY[1] = image.getHeight() * 7 / 8;
-                return positionXY;
+                textPosition[0] = image.getWidth() / 9;
+                textPosition[1] = image.getHeight() * 7 / 8;
+                return textPosition;
             }
             case "rightbottom" -> {
-                positionXY[0] = image.getWidth() * 5 / 9;
-                positionXY[1] = image.getHeight() * 7 / 8;
+                textPosition[0] = image.getWidth() * 5 / 9;
+                textPosition[1] = image.getHeight() * 7 / 8;
             }
         }
-        return positionXY;
+        return textPosition;
     }
 
     private List<String> parsedList(String[] args) {
