@@ -23,9 +23,10 @@ public class Main {
                     "b) 'red', 'green', 'black', 'blue'  - Change the text's color.\n" +
                     "c) '50' - set font size.\n" +
                     "d) '-s' - save the image in folder named 'mems'.\n\n" +
-                    "For example if you input: java -jar build/libs/TextToImage-1.0-SNAPSHOT.jar mem ./horse.jpg righttop red 27 -s 'Nice kitty!' \n\n" +
+                    "For example if you input: \njava -jar build/libs/TextToImage-1.0-SNAPSHOT.jar mem ./horse.jpg righttop red 27 -s 'Nice kitty!' \n\n" +
                     "You add red text: 'Nice kitty!' with font size 27 to the right top of the ./picture.jpg and save it at the /mems/.\n" +
-                    "You can switch the order of position and color, but another arguments NOT!\n" +
+                    "You can switch the order of position and color and font size, but another arguments NOT!" +
+                    "For example: \njava -jar build/libs/TextToImage-1.0-SNAPSHOT.jar mem ./horse.jpg 27 red righttop -s 'Nice kitty!'\n" +
                     "By default settings: color = black, position = left top, not save.\n" +
                     "You can input only position or color, it will work with default parameters.\n\n" +
                     "*Select the appropriate font size depending on the image resolution.");
